@@ -10,5 +10,7 @@ if __name__ == '__main__':
     arr = input('Please input a number list such as 1, 3, 2, 4, which your want to sort: ').replace(' ', '').split(',')
     if action == 'B':
         sortedArr = sort.bubble_sort(arr)
+    elif action == 'S':
+        sortedArr = sort.selection_sort(arr)
 
     print('🌹 sorted list is : ', sortedArr)
