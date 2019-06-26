@@ -23,8 +23,10 @@ pip install -r requirements.txt
 ## Catalog
 
 ```
- ├── sorting-algorithms                  // 排序算法
- └── requirement.txt                    //依赖文件
+├── sorting-algorithms                 // 排序算法
+├── tools                              // 一些小工具
+│   └── kindle_node                    // kindle 笔记归档
+└── requirement.txt                    // 依赖文件
 ```
 
 
