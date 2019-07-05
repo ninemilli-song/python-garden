@@ -7,6 +7,7 @@
 import os
 import shutil
 
+
 def gen_node(target_path):
     """
     生成笔记
@@ -39,6 +40,7 @@ def gen_node(target_path):
         book_note.write(onenote[3] + '\n')
         book_note.write(onenote[4] + '\n')
         book_note.close()
+
 
 if __name__ == '__main__':
     print("//////////////////////////////////////////////////////////////////")

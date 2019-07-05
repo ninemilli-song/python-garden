@@ -18,6 +18,9 @@ source ./venv/bin/activate
 
 # 安装项目依赖
 pip install -r requirements.txt
+
+# 生成项目依赖
+pip freeze > requirement.txt
 ```
 
 ## Catalog
