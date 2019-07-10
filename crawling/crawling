@@ -1,0 +1,112 @@
+#!python3
+# -*- coding: utf-8 -*-
+# crawling.py - 爬取网页内容，保存为 md 文件
+
+import os
+import re
+from bs4 import BeautifulSoup
+import tomd
+
+
+# 匹配文件名的正则表达式
+file_reg = re.compile(r'(.+)\.html$')
+
+
+# 获取目标目标下的 html 文件名
+def get_target_files(target_folder):
+    files = []
+    all_files = os.listdir(target_folder)
+    # 过滤不是 html的文件
+    for i in range(len(all_files)):
+        if file_reg.match(all_files[i]):
+            # 目标文件的完整路径
+            file_abs_path = os.path.join(target_folder, all_files[i])
+            # 保存目标文件的完整路径
+            files.append(file_abs_path)
+    return files
+
+
+# 转换 html to md
+def convert_to_md(file):
+    if os.path.isfile(file):
+        soup = BeautifulSoup(open(file), 'html.parser')
+        # 提取 html 内容
+        content = str(soup.find_all(class_="page-inner")[0])
+        # 将 html 转换为 md
+        md_str = tomd.convert(content)
+        return md_str
+    else:
+        return None
+
+
+# 创建 md 文件
+def create_md_file(md_str, output_folder, file_name='unnamed'):
+    if os.path.isdir(output_folder):
+        print('Create {}.md beginning...'.format(file_name))
+        # 打文件 如果不存在，生成新文件
+        # r+ 打开一个文件用于读写。文件指针将会放在文件的开头。
+        # w+ 打开一个文件用于读写。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。
+        # a+ 打开一个文件用于读写。如果该文件已存在，文件指针将会放在文件的结尾。文件打开时会是追加模式。如果该文件不存在，创建新文件用于读写。
+        output_file = open(os.path.join(output_folder, file_name), 'w+')
+        # 写入文件内容
+        output_file.write(md_str)
+        # 关闭文件
+        output_file.close()
+        print('Create {}.md completed.'.format(file_name))
+    else:
+        print('Output folder is error, Please check it exist! ------> ', output_folder)
+
+
+# 遍历目标目录下的 html 文件，生成 md 文件
+def gen_md(files, output_folder):
+    success_count = 0
+    failed_count = 0
+    print('/'*80)
+    print('Process start'.center(80, '*'))
+    for i in range(len(files)):
+        # 将 html 转换为 md
+        md_str = convert_to_md(files[i])
+        if md_str is not None:
+            # 用正则表达式匹配出文件名
+            file_mo = file_reg.match(files[i])
+            # 导出文件的文件名
+            file_name = file_mo.groups()[0] + '.md'
+            # 生成 md 文件
+            create_md_file(md_str, output_folder, file_name)
+            # 生成文件个数 +1
+            success_count += 1
+        else:
+            print('Path error: is not file\n', files[i])
+            # 创建失败文件个数 +1
+            failed_count += 1
+
+    print('Process Finished'.center(80, '*'))
+    print('Success count {}'.format(success_count))
+    print('Failed count {}'.format(failed_count))
+    print('/' * 80)
+
+
+if __name__ == '__main__':
+    # 输入文件路径
+    while True:
+        print('Please input files fold:')
+        target_path = input()
+        if os.path.isdir(target_path):
+            break
+        else:
+            print('Target dir is error, please check your target path exist or is folder and try again! : ', target_path)
+            print('Press command & c to exit')
+
+    # 输入导出文件的目录
+
+    while True:
+        print('Please input your output fold: ')
+        output_path = input()
+        if os.path.isdir(output_path):
+            break
+        else:
+            print('Output dir is error, please check your target path exist or is folder and try again! : ', output_path)
+            print('Press command & c to exit')
+
+    target_files = get_target_files(target_path)
+    gen_md(target_files, output_path)
