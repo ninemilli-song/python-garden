@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import tomd
 import requests
 from requests.exceptions import ReadTimeout, ConnectionError, RequestException
+import re
 
 
 # 转换 html to md
@@ -18,7 +19,7 @@ def gen_md(url, target_class):
         url = url.strip()
         try:
             response = requests.get(url)
-            if response.status_code != '200':
+            if response.status_code != 200:
                 raise Exception('Request error! ', response.status_code)
         except ReadTimeout:
             raise Exception('Timeout')
@@ -83,9 +84,13 @@ if __name__ == '__main__':
         if os.path.isdir(output_path):
             break
         else:
-            print('Output dir is error, please check your target path exist or is folder and try again! : ',
-                  output_path)
             print('Press ctrl & c to exit')
 
     md_content = gen_md(target_url, class_name)
-    create_md_file(md_content, output_path)
+
+    # 自动生成文件名
+    regex = re.compile(r'^(http|https)://(.+/)(.+)$')
+    mo = regex.match(target_url)
+    file_name = mo.group(3) + '.md'
+
+    create_md_file(md_content, output_path, file_name)
