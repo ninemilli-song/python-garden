@@ -6,6 +6,7 @@ import os
 from bs4 import BeautifulSoup
 import tomd
 import requests
+from requests.exceptions import ReadTimeout, ConnectionError, RequestException
 
 
 # 转换 html to md
@@ -15,7 +16,16 @@ import requests
 def gen_md(url, target_class):
     if url is not None:
         url = url.strip()
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
+            if response.status_code != '200':
+                raise Exception('Request error! ', response.status_code)
+        except ReadTimeout:
+            raise Exception('Timeout')
+        except ConnectionError:
+            raise Exception('Connect error')
+        except RequestException:
+            raise Exception('Error')
         soup = BeautifulSoup(response.content, 'html.parser')
         # 提取 html 内容
         content = str(soup.find_all(class_=target_class)[0])
@@ -51,22 +61,20 @@ def create_md_file(md_str, output_folder, file_name='unnamed.md'):
 if __name__ == '__main__':
     # 爬取网络页面
     while True:
-        print('Please input your target web page')
-        target_url = input()
+        print('Please input your target web page:')
+        target_url = str(input())
         if target_url is not None:
             break
         else:
-            print('Your target url is invalid, please check your target path exist and try again! ',
-                  target_url)
-            print('Press command & c to exit')
+            print('Press ctrl & c to exit')
 
     while True:
-        print('Another thing! Give me the flag of node wrap the content which you wanted!')
+        print('Please input your target the node class name: ')
         class_name = input()
         if class_name is not None:
             break
         else:
-            print("I can't understand your say and try again! ")
+            print('Press ctrl & c to exit')
 
     # 输入导出文件的目录
     while True:
@@ -77,7 +85,7 @@ if __name__ == '__main__':
         else:
             print('Output dir is error, please check your target path exist or is folder and try again! : ',
                   output_path)
-            print('Press command & c to exit')
+            print('Press ctrl & c to exit')
 
     md_content = gen_md(target_url, class_name)
     create_md_file(md_content, output_path)
