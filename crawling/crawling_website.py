@@ -17,16 +17,14 @@ import re
 def gen_md(url, target_class):
     if url is not None:
         url = url.strip()
+        response = requests.get(url)
         try:
-            response = requests.get(url)
-            if response.status_code != 200:
-                raise Exception('Request error! ', response.status_code)
-        except ReadTimeout:
-            raise Exception('Timeout')
-        except ConnectionError:
-            raise Exception('Connect error')
-        except RequestException:
-            raise Exception('Error')
+            response.raise_for_status()
+            # if response.status_code != 200:
+            #     raise Exception('Request error! ', response.status_code)
+        except Exception as err:
+            print("There war a problem: %s" % (err))
+
         soup = BeautifulSoup(response.content, 'html.parser')
         # 提取 html 内容
         content = str(soup.find_all(class_=target_class)[0])
@@ -46,9 +44,11 @@ def create_md_file(md_str, output_folder, file_name='unnamed.md'):
         # w+ 打开一个文件用于读写。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。
         # a+ 打开一个文件用于读写。如果该文件已存在，文件指针将会放在文件的结尾。文件打开时会是追加模式。如果该文件不存在，创建新文件用于读写。
         # encoding='utf-8' 创建文件为 utf-8 编码格式，如果不指定会创建 ascii编码类型的文件，导致文件写入报错
-        output_file = open(os.path.join(output_folder, file_name), 'w+', encoding='utf-8')
-        # 写入文件内容
-        content = md_str.encode('utf-8', 'ignore').decode('utf-8')
+        # output_file = open(os.path.join(output_folder, file_name), 'wb', encoding='utf-8')
+        output_file = open(os.path.join(output_folder, file_name), 'wb')
+        # 写入文件内容 编辑为二进制
+        content = md_str.encode('utf-8', 'ignore')
+        # content = md_str.encode('utf-8', 'ignore').decode('utf-8')
         # content =
 
         output_file.write(content)
