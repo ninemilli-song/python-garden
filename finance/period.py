@@ -51,7 +51,7 @@ def get(code):
     else:
         items = []
         for item in sh.items():
-            items.append(item)
+            items.append(item[1])
         return items
 
 
@@ -78,14 +78,32 @@ def display(code):
     :param code: 基金代码
     :return: None
     """
-    print('期初数据 start'.center(100, '*'))
+    # 打印表头
+    table_header = ['基金编码'.center(12, '-'), '起始时间'.center(12, '-'), '金额'.center(12, '-')]
+    print('|' + '|'.join(table_header) + '|')
+
+    # 打印数据
     data = get(code)
     if isinstance(data, dict):
-        print('数据[{}] = [{}]'.format(code, data))
+        # print('数据[{}] = [{}]'.format(code, data))
+        row = [
+            str(data['code']).ljust(12, '-'),
+            str(data['beginning']).ljust(12, '-'),
+            str(data['amount']).rjust(12, '-'),
+        ]
+        print('|' + '|'.join(row) + '|')
     elif isinstance(data, list):
         for item in data:
-            print('数据[{}] = [{}]'.format(item[0], item[1]))
-    print('期初数据 end'.center(100, '*'))
+            row = [
+                str(item['code']).ljust(12, '-'),
+                str(item['beginning']).ljust(12, '-'),
+                str(item['amount']).rjust(12, '-'),
+            ]
+            print('|' + '|'.join(row) + '|')
+
+    # 打印表尾
+    table_footer = ['-'*12, '-'*12, '-'*12]
+    print('|' + '|'.join(table_footer) + '|')
     pass
 
 
