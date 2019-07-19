@@ -3,6 +3,7 @@
 # 记录 基金编码（code） 起始时间（beginning） 起始金额（amount）
 
 import shelve, time
+from util.formatter import convert_timestamp
 
 
 def get_shelve():
@@ -88,7 +89,7 @@ def display(code):
         # print('数据[{}] = [{}]'.format(code, data))
         row = [
             str(data['code']).ljust(12, '-'),
-            str(data['beginning']).ljust(12, '-'),
+            convert_timestamp(data['beginning']).ljust(12, '-'),
             str(data['amount']).rjust(12, '-'),
         ]
         print('|' + '|'.join(row) + '|')
@@ -96,7 +97,7 @@ def display(code):
         for item in data:
             row = [
                 str(item['code']).ljust(12, '-'),
-                str(item['beginning']).ljust(12, '-'),
+                convert_timestamp(item['beginning']).ljust(12, '-'),
                 str(item['amount']).rjust(12, '-'),
             ]
             print('|' + '|'.join(row) + '|')
