@@ -3,6 +3,12 @@
 # 记录 基金编码（code） 起始时间（beginning） 起始金额（amount）
 
 import shelve, time
+import sys, os
+# 设置当前工作路径加入到系统路径中，解决控制台调用时找不到自定义 package 路径的问题
+current_directory = os.path.dirname(os.path.abspath(__file__))
+root_path = os.path.abspath(os.path.dirname(current_directory) + os.path.sep + '.')
+sys.path.append(root_path)
+# print('sys.path => ', sys.path)
 from util.formatter import convert_timestamp
 
 
@@ -11,7 +17,8 @@ def get_shelve():
     open file
     :return: shelve Object
     """
-    return shelve.open('./data/period_data')
+    # 使用绝对地址，相对地址在不同的调用方式下会不一致
+    return shelve.open(current_directory + '/data/period_data')
 
 
 def save(code, beginning, amount):
