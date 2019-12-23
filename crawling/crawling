@@ -42,7 +42,7 @@ def convert_to_md(file):
 # 创建 md 文件
 def create_md_file(md_str, output_folder, file_name='unnamed'):
     if os.path.isdir(output_folder):
-        print('Create {}.md beginning...'.format(file_name))
+        print('Create {} beginning...'.format(file_name))
         # 打文件 如果不存在，生成新文件
         # r+ 打开一个文件用于读写。文件指针将会放在文件的开头。
         # w+ 打开一个文件用于读写。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。
@@ -52,9 +52,9 @@ def create_md_file(md_str, output_folder, file_name='unnamed'):
         output_file.write(md_str)
         # 关闭文件
         output_file.close()
-        print('Create {}.md completed.'.format(file_name))
+        print('Create {} completed.'.format(file_name))
     else:
-        print('Output folder is error, Please check it exist! ------> ', output_folder)
+        print('❌ Output folder is error, Please check it exist! ------> ', output_folder)
 
 
 # 遍历目标目录下的 html 文件，生成 md 文件
@@ -76,7 +76,7 @@ def gen_md(files, output_folder):
             # 生成文件个数 +1
             success_count += 1
         else:
-            print('Path error: is not file\n', files[i])
+            print('❗️Path error: is not file\n', files[i])
             # 创建失败文件个数 +1
             failed_count += 1
 
@@ -101,8 +101,12 @@ if __name__ == '__main__':
     # 输入导出文件的目录
     while True:
         print('Please input your output fold: ')
+        print('Input Y(y) use the input files fold as your output fold: ')
         output_path = input()
-        if os.path.isdir(output_path):
+        if output_path.lower() == 'y':
+            output_path = target_path
+            break
+        elif os.path.isdir(output_path):
             break
         else:
             print('Output dir is error, please check your target path exist or is folder and try again! : ', output_path)
