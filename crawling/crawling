@@ -90,8 +90,7 @@ if __name__ == '__main__':
     # 爬取本地 html
     # 输入文件路径
     while True:
-        print('Please input files fold:')
-        target_path = input()
+        target_path = input('Please input files fold:')
         if os.path.isdir(target_path):
             break
         else:
@@ -100,8 +99,12 @@ if __name__ == '__main__':
 
     # 输入导出文件的目录
     while True:
-        print('Please input your output fold: ')
-        print('Input Y(y) use the input files fold as your output fold: ')
+        print(
+            '''
+            Please input your output fold: 
+            Input Y(y) use the input files fold as your output fold: 
+            '''
+        )
         output_path = input()
         if output_path.lower() == 'y':
             output_path = target_path
