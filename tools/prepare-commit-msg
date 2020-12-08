@@ -1,0 +1,92 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+#
+# An example hook script to prepare the commit log message.
+# Called by "git commit" with the name of the file that has the
+# commit message, followed by the description of the commit
+# message's source.  The hook's purpose is to edit the commit
+# message file.  If the hook fails with a non-zero status,
+# the commit is aborted.
+#
+# To enable this hook, rename this file to "prepare-commit-msg".
+
+# This hook includes three examples. The first one removes the
+# "# Please enter the commit message..." help message.
+#
+# The second includes the output of "git diff --name-status -r"
+# into the message, just before the "git status" output.  It is
+# commented because it doesn't cope with --amend or with squashed
+# commits.
+#
+# The third example adds a Signed-off-by line to the message, that can
+# still be edited.  This is rarely a good idea.
+
+# COMMIT_MSG_FILE=$1
+# COMMIT_SOURCE=$2
+# SHA1=$3
+
+# /usr/bin/perl -i.bak -ne 'print unless(m/^. Please enter the commit message/..m/^#$/)' "$COMMIT_MSG_FILE"
+
+# case "$COMMIT_SOURCE,$SHA1" in
+#  ,|template,)
+#    /usr/bin/perl -i.bak -pe '
+#       print "\n" . `git diff --cached --name-status -r`
+# 	 if /^#/ && $first++ == 0' "$COMMIT_MSG_FILE" ;;
+#  *) ;;
+# esac
+
+# SOB=$(git var GIT_COMMITTER_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# git interpret-trailers --in-place --trailer "$SOB" "$COMMIT_MSG_FILE"
+# if test -z "$COMMIT_SOURCE"
+# then
+#   /usr/bin/perl -i.bak -pe 'print "\n" if !$first_line++' "$COMMIT_MSG_FILE"
+# fi
+
+import subprocess
+import sys
+import re
+
+# log = subprocess.check_output(['git', 'log', '-1', '-p']).decode('utf-8')
+
+# print(log)
+
+# The forbidden branch names
+forbidden_branchs = ('test-bc', 'testbc', 'test', 'develop', 'bc-dev')
+
+print(sys.argv)
+
+# 校验文件路径，提交信息文件中午，提交类型
+# sys.argv 可以获取prepare-commit-msg 传入的三个参数 
+validate_path, message_path, message_type = sys.argv;
+
+# get commit message
+with open(message_path, 'r') as message_file:
+	lines = message_file.readlines()
+	print(lines)
+
+# 通过正则匹配提交信息内容是否为merge
+pattern = r'Merge branch \'(\S+)\' into (\S+)'
+regex = re.compile(pattern, flags=re.IGNORECASE)
+output = regex.match(lines[0])
+
+# is merge ?
+if output is not None and message_type == 'merge':
+	match_groups = output.groups()
+
+	# Get from branch and current branch
+	from_branch, current_branch = match_groups
+	
+	if from_branch in forbidden_branchs:
+		print('\033[31;47merror: merge branch\'' + from_branch + '\'into branch\'' + current_branch + '\'\033[0m')
+		print('\033[31mrejected！\033[0m')
+		print('\033[31mstack: prepare-commit-msg\033[0m\n')
+		print('\033[31m***************************warning***************************')
+		print('不允许将以下分支合并到当前' + current_branch + '分支')
+		print(forbidden_branchs)
+		print('运行 `git reset --merge` 取消这次合并')
+		print('***************************warning***************************\033[0m')
+		exit(1)
+
+print('\033[32mprepare-commit-msg validate success!\033[0m')
+
+exit(1)
