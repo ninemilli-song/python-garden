@@ -20,7 +20,7 @@ def gen_node(target_path):
         # 如果文件已存在会抛出异常，捕获异常避免程序错误
         os.mkdir(target_path)
     except OSError as error:
-        print("OSError" + str(error) + "\n")
+        print(f'🌼 Warning: {target_path}目录存在:\n')
         # 如果文件目录存在，则清空然后新建
         if error.errno == 17:
             print("🚗 I will delete it and create a new one! :)" + "\n")
@@ -33,6 +33,7 @@ def gen_node(target_path):
         for i in range(0,5):
             line = f.readline()
             if not line:
+                print(f'👉 文档整理完毕，请到{target_path}目录下查看!')
                 exit()
             onenote.append(line)
         book_note = open('%s%s.txt'%(target_path, onenote[0]), 'a+')
@@ -49,9 +50,11 @@ if __name__ == '__main__':
     print("这个小工具按照图名将笔记归类到各自的文件中".center(60, '*'))
     print("方便爱读书的你".center(60, '*'))
     print("/"*60)
-    path = input("请输入你导出文件的目录（默认目录为桌面 - /Users/ninemilli/Desktop/digest/）: ")
+    user_path = os.path.expanduser('~')
+    default_path = f'{user_path}/Desktop/digest/'
+    path = input(f"请输入你导出文件的目录（默认目录为桌面 - {default_path}）: ")
 
     if path == '':
-        path = '/Users/ninemilli/Desktop/digest/'
-    
+        path = default_path
+
     gen_node(path)
