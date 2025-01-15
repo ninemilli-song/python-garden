@@ -15,7 +15,7 @@ def gen_node(target_path):
     # kindle 中笔记的目录
     note_path = '/Volumes/Kindle/documents/My Clippings.txt'
     f = open(note_path, 'r+')
-    
+
     try:
         # 如果文件已存在会抛出异常，捕获异常避免程序错误
         os.mkdir(target_path)
@@ -30,13 +30,13 @@ def gen_node(target_path):
 
     while True:
         onenote = []
-        for i in range(0,5):
+        for i in range(0, 5):
             line = f.readline()
             if not line:
                 print(f'👉 文档整理完毕，请到{target_path}目录下查看!')
                 exit()
             onenote.append(line)
-        book_note = open('%s%s.txt'%(target_path, onenote[0]), 'a+')
+        book_note = open('%s//%s.txt' % (target_path, onenote[0]), 'a+')
         book_note.write(onenote[1] + '\n')
         book_note.write(onenote[3] + '\n')
         book_note.write(onenote[4] + '\n')
@@ -50,8 +50,7 @@ if __name__ == '__main__':
     print("这个小工具按照图名将笔记归类到各自的文件中".center(60, '*'))
     print("方便爱读书的你".center(60, '*'))
     print("/"*60)
-    user_path = os.path.expanduser('~')
-    default_path = f'{user_path}/Desktop/digest/'
+    default_path = os.path.join(os.getcwd(), 'output/kindle_notes')
     path = input(f"请输入你导出文件的目录（默认目录为桌面 - {default_path}）: ")
 
     if path == '':

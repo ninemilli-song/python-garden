@@ -108,5 +108,6 @@ class MyTestCase(unittest.TestCase):
                 # The parent_uuid of bookmark is -1
                 self.assertEqual(bookmark['parent_uuid'], -1)
 
+
 if __name__ == '__main__':
     unittest.main()
